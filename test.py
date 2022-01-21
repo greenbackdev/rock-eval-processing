@@ -1,5 +1,5 @@
 import os
-from RockEvalData import RockEvalData
+from rock_eval_data import RockEvalData
 import json
 
 input_folder = "test_data"
