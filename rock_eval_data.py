@@ -149,8 +149,8 @@ class RockEvalData:
         curves_pyr["CO2"] = curves_pyr["CO2"].apply(lambda x: normalize_gas(x, 12 / 44))
         curves_oxi["CO2"] = curves_oxi["CO2"].apply(lambda x: normalize_gas(x, 12 / 44))
         if self.re_version == "RE7":
-            curves_pyr["SO2"] = curves_pyr["SO2"].apply(lambda x: normalize_gas(x, 16 / 32))
-            curves_oxi["SO2"] = curves_oxi["SO2"].apply(lambda x: normalize_gas(x, 16 / 32))
+            curves_pyr["SO2"] = curves_pyr["SO2"].apply(lambda x: normalize_gas(x, 32 / 64))
+            curves_oxi["SO2"] = curves_oxi["SO2"].apply(lambda x: normalize_gas(x, 32 / 64))
 
         return {"pyrolysis": curves_pyr, "oxidation": curves_oxi}
         
