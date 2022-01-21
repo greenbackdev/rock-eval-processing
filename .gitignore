@@ -1,0 +1,6 @@
+.DS_Store
+.vscode/
+DATA/*
+DATA_treated/*
+test_treated_data
+treat_data_rockeval_comparison.py
