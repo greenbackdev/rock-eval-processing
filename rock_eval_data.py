@@ -43,7 +43,13 @@ class RockEvalData:
                     if filetype == "S00" or (filetype == "B00" and key == "Curves Pyro"):
                         reading_metadata = False
                 elif reading_metadata:
-                    key_inner, value = line.split("=")
+                    if "=" not in line: # non-formatted metadata
+                        try:
+                            metadata[key]["Extra"] = metadata[key]["Extra"] + [line]
+                        except KeyError:
+                            metadata[key]["Extra"] = [line]
+                    else:
+                        key_inner, value = line.split("=")
                     metadata[key][key_inner] = value
                 else:
                     data[key].append(line.split("\t"))
@@ -120,13 +126,21 @@ class RockEvalData:
         
         elif self.re_version == "RE7":
             kfid = float(metadata["Standard"]["K_FID"])
-            baseline["FID"] = float(metadata["base ligne"]["LB_FID"])
-            baseline["CO_pyr"] = float(metadata["base ligne"]["LB_CO_P"])
-            baseline["CO2_pyr"] = float(metadata["base ligne"]["LB_CO2_P"])
-            baseline["SO2_pyr"] = float(metadata["base ligne"]["LB_SO2_P"])
-            baseline["CO_oxi"] = float(metadata["base ligne"]["LB_CO_O"])
-            baseline["CO2_oxi"] = float(metadata["base ligne"]["LB_CO2_O"])
-            baseline["SO2_oxi"] = float(metadata["base ligne"]["LB_SO2_O"])
+
+            def baseline_RE7(metadata, key):
+                bl = metadata["base ligne"][key]
+                if len(bl) == 0:
+                    return 0
+                else:
+                    return float(bl)
+                    
+            baseline["FID"] = baseline_RE7(metadata, "LB_FID")
+            baseline["CO_pyr"] = baseline_RE7(metadata, "LB_CO_P")
+            baseline["CO2_pyr"] = baseline_RE7(metadata, "LB_CO2_P")
+            baseline["SO2_pyr"] = baseline_RE7(metadata, "LB_SO2_P")
+            baseline["CO_oxi"] = baseline_RE7(metadata, "LB_CO_O")
+            baseline["CO2_oxi"] = baseline_RE7(metadata, "LB_CO2_O")
+            baseline["SO2_oxi"] = baseline_RE7(metadata, "LB_SO2_O")
         
         curves_pyr["FID"] = curves_pyr["FID"].apply(lambda x: x - baseline["FID"])
         curves_pyr["CO"] = curves_pyr["CO"].apply(lambda x: x - baseline["CO_pyr"])
