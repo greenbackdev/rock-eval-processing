@@ -1,5 +1,6 @@
 .DS_Store
 .vscode/
+.bash_profile
 DATA/*
 DATA_treated/*
 test_treated_data
