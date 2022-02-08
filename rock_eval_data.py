@@ -5,14 +5,18 @@ from collections import defaultdict
 
 
 class RockEvalData:
-    """TODO Docstring
+    """
+    A class used to represent Rock Eval data of a sample.
     """
 
     def __init__(self, sample_name, re_version, input_folder):
         """
-        :param sample_name: TODO
-        :param re_version: TODO
-        :param input_folder: TODO 
+        :param sample_name: The name of the sample. It must be the name of the raw data file(s).
+        :param re_version: The RockEval instrument version. Admitted values are 'RE6' and 'RE7'.
+        :param input_folder: Path to the folder containing the raw RockEval data.
+        :type sample_name: str
+        :type re_version: str
+        :type input_folder: str
         """
         if re_version not in ("RE6", "RE7"):
             raise Exception("Only 'RE6' and 'RE7' are admitted re_version values.")
@@ -23,13 +27,25 @@ class RockEvalData:
     
     @staticmethod
     def parse_rock_eval(path):
-        """TODO add Docstring with for instance the format of the file to parse?
         """
+        Parses the raw RockEval data and metadata file(s).
+
+        Three types of file extensions are accepted:
+            - .S00: RE6 data
+            - .R00: RE6 metadata
+            - .B00: RE7 data and metadata
+        
+        :param path: Path to the file. Accepted file extensions are .S00, .R00, .B00.
+        :returns: tuple (metadata, data)
+        :rtype tuple
+        """
+
         metadata = defaultdict(dict)
         data = defaultdict(list)
 
-        # S00 or B00
         filetype = path.split(".")[1]
+        if filetype not in ["R00", "S00", "B00"]:
+            raise Exception("Only '.R00', '.S00' and '.B00' are admitted file extensions.")
         
         with open(path, "r") as f:
             reading_metadata = True
@@ -56,8 +72,14 @@ class RockEvalData:
         return metadata, data
 
     def _parse(self):
-        """TODO add docstring
+        """Parses the raw RockEval data and metadata file(s).
+
+        Returns a tuple containing the metadata and the data as dictionaries.
+
+        :returns: tuple (metadata, data)
+        :rtype tuple
         """
+
         if self.re_version == "RE6":
             metadata_path = os.path.join(self.input_folder, self.sample_name + ".R00")
             data_path = os.path.join(self.input_folder, self.sample_name + ".S00")
@@ -72,6 +94,15 @@ class RockEvalData:
         
 
     def _extract_curves(self):
+        """Extracts the pyrolysis and oxidation curves from the data dictionary.
+
+        Returns a dictionary of pandas.DataFrame() objects (one DataFrame for pyrolysis
+        and one for oxidation).
+
+        :returns: RockEval pyrolysis and oxidation curves
+        :rtype dict
+        """
+
         columns_pyr = [
             "time",
             "T",
@@ -107,6 +138,14 @@ class RockEvalData:
         return {"pyrolysis": curves_pyr.astype(float), "oxidation": curves_oxi.astype(float)}
 
     def _normalize_curves(self, raw_curves):
+        """Normalizes the Pyrolysis and Oxidation curves with respect to the the sample mass.
+
+        :param raw_curves: RockEval pyrolysis and oxidation curves
+        :type raw_curves: dict
+        :returns: Normalized RockEval pyrolysis and oxidation curves
+        :rtype dict
+        """
+
         if self.re_version not in ('RE6', 'RE7'):
             return
 
@@ -169,9 +208,23 @@ class RockEvalData:
         return {"pyrolysis": curves_pyr, "oxidation": curves_oxi}
         
     def get_metadata(self):
+        """Returns the sample's metadata.
+
+        :returns: metadata
+        :rtype: dict
+        """
+
         return self._metadata
 
     def get_curves(self, normalized=True):
+        """Returns the Pyrolysis and Oxidation curves.
+
+        :param normalized: if True, the curves are normalized with respect to the sample's mass (default is True).
+        :type param: bool
+        :returns: RockEval pyrolysis and oxidation curves
+        :rtype dict
+        """
+
         raw_curves = self._extract_curves()
         if normalized:
             return self._normalize_curves(raw_curves)
