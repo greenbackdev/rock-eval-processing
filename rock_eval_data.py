@@ -9,7 +9,7 @@ class RockEvalData:
     A class used to represent Rock Eval data of a sample.
     """
 
-    def __init__(self, sample_name, re_version, input_folder):
+    def __init__(self, sample_name: str, re_version: str, input_folder: str):
         """
         :param sample_name: The name of the sample. It must be the name of the raw data file(s).
         :param re_version: The RockEval instrument version. Admitted values are 'RE6' and 'RE7'.
@@ -26,7 +26,7 @@ class RockEvalData:
         self._metadata, self._data = self._parse()
     
     @staticmethod
-    def parse_rock_eval(path):
+    def parse_rock_eval(path: str):
         """
         Parses the raw RockEval data and metadata file(s).
 
@@ -137,7 +137,7 @@ class RockEvalData:
         
         return {"pyrolysis": curves_pyr.astype(float), "oxidation": curves_oxi.astype(float)}
 
-    def _normalize_curves(self, raw_curves):
+    def _normalize_curves(self, raw_curves: dict):
         """Normalizes the Pyrolysis and Oxidation curves with respect to the the sample mass.
 
         :param raw_curves: RockEval pyrolysis and oxidation curves
