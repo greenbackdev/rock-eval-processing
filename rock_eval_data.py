@@ -2,6 +2,7 @@ import os
 import pandas as pd
 
 from collections import defaultdict
+from typing import Dict
 
 
 class RockEvalData:
@@ -26,7 +27,7 @@ class RockEvalData:
         self._metadata, self._data = self._parse()
     
     @staticmethod
-    def parse_rock_eval(path: str):
+    def parse_rock_eval(path: str) -> tuple:
         """
         Parses the raw RockEval data and metadata file(s).
 
@@ -71,7 +72,7 @@ class RockEvalData:
                     data[key].append(line.split("\t"))
         return metadata, data
 
-    def _parse(self):
+    def _parse(self) -> tuple:
         """Parses the raw RockEval data and metadata file(s).
 
         Returns a tuple containing the metadata and the data as dictionaries.
@@ -93,7 +94,7 @@ class RockEvalData:
         return metadata, data
         
 
-    def _extract_curves(self):
+    def _extract_curves(self) -> Dict:
         """Extracts the pyrolysis and oxidation curves from the data dictionary.
 
         Returns a dictionary of pandas.DataFrame() objects (one DataFrame for pyrolysis
@@ -137,7 +138,7 @@ class RockEvalData:
         
         return {"pyrolysis": curves_pyr.astype(float), "oxidation": curves_oxi.astype(float)}
 
-    def _normalize_curves(self, raw_curves: dict):
+    def _normalize_curves(self, raw_curves: Dict) -> Dict:
         """Normalizes the Pyrolysis and Oxidation curves with respect to the the sample mass.
 
         :param raw_curves: RockEval pyrolysis and oxidation curves
@@ -207,7 +208,7 @@ class RockEvalData:
 
         return {"pyrolysis": curves_pyr, "oxidation": curves_oxi}
         
-    def get_metadata(self):
+    def get_metadata(self) -> Dict:
         """Returns the sample's metadata.
 
         :returns: metadata
@@ -216,7 +217,7 @@ class RockEvalData:
 
         return self._metadata
 
-    def get_curves(self, normalized=True):
+    def get_curves(self, normalized=True) -> Dict:
         """Returns the Pyrolysis and Oxidation curves.
 
         :param normalized: if True, the curves are normalized with respect to the sample's mass (default is True).
