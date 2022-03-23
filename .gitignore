@@ -1,6 +1,7 @@
 .DS_Store
 .vscode/
-DATA/*
-DATA_treated/*
 test_treated_data
-treat_data_rockeval_comparison.py
+example_treated_data/
+untracked_scripts/*
+untracked_inputs/*
+untracked_outputs/*
